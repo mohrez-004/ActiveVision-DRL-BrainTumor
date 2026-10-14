@@ -5,7 +5,7 @@
 [![Stable-Baselines3](https://img.shields.io/badge/Stable--Baselines3-PPO-brightgreen)](https://stable-baselines3.readthedocs.io/)
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-Custom_Env-orange)](https://gymnasium.farama.org/)
 
-> **Note on Code & Reproducibility:** This repository contains the architectural implementation (`active_vision_core.py`), evaluation benchmarks (`.csv`), and visual demonstrations for our research manuscript (currently under peer review). While full training scripts and proprietary reward-shaping weights remain restricted pending publication, the core 12-channel Gymnasium environment specification and the complete Stage-2 Adaptive ROI Chan-Vese segmentation module are provided in [`active_vision_core.py`](./active_vision_core.py).
+> **Note on Code & Reproducibility:** This repository contains the architectural implementation (`active_vision_core.py`), evaluation benchmarks (`.csv`), and visual demonstrations for our research manuscript (currently under peer review). While full training scripts and proprietary reward-shaping weights remain restricted pending publication, the core 12-channel Gymnasium environment specification and the complete Stage-2 Adaptive ROI Chan-Vese segmentation module are provided in [`active_vision_core.py`](./src/active_vision_core.py).
 
 ---
 
