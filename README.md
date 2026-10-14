@@ -9,14 +9,22 @@
 
 ---
 
-## 🎥 Autonomous Agent Demonstration
+## 🎥 Autonomous Agent Demonstrations
 
-![Agent Localization and Segmentation Demo](./agent_demo_1.gif)
-![Agent Localization and Segmentation Demo](./agent_demo_2.gif)
-![Agent Localization and Segmentation Demo](./agent_demo_3.gif)
+### Case 1 (`BraTS2021_00008`): Long-Range Cross-Hemisphere Search & Fixation
+*Starting far from the lesion in the opposite hemisphere, the agent leverages 10px macro-steps for rapid global traversal before converging on the tumor.*
+![Agent Localization and Segmentation Demo 1](./agent_demo_1.gif)
 
-* **Left Panel:** The PPO agent navigates the 240×240 multi-modal MRI slice using coarse macro-steps (10 px) for rapid global search and fine micro-steps (2 px) near the tumor boundary, utilizing a multi-scale foveated observation window (yellow: 32×32 local, orange: 96×96 intermediate).
-* **Right Panel:** Upon triggering the terminal fixation action (`Action 16`), an adaptive ROI-guided morphological Chan-Vese pipeline segments the tumor in **~20.4 ms** (over **3.1× faster** than full-slice segmentation) while achieving superior boundary adherence (**Green:** Ground Truth, **Red:** Predicted Mask).
+### Case 2 (`BraTS2021_00501`): Large-Volume Tumor & Dynamic ROI Expansion (`64×64 → 96×96`)
+*Demonstrates adaptive window scaling when encountering an extensive lesion that exceeds the initial 64×64 crop boundary.*
+![Agent Localization and Segmentation Demo 2](./agent_demo_2.gif)
+
+### Case 3 (`BraTS2021_01394`): Heterogeneous Multi-Focal Lesion & Fine Micro-Step Navigation
+*Illustrates robust localization and boundary adherence on a lower-contrast slice with complex, multi-core tumor morphology.*
+![Agent Localization and Segmentation Demo 3](./agent_demo_3.gif)
+
+- **Left Panel:** The PPO agent navigates the 240×240 multi-modal MRI slice using coarse macro-steps (10 px) for rapid global search and fine micro-steps (2 px) near the tumor boundary, utilizing a multi-scale foveated observation window (yellow: 32×32 local, orange: 96×96 intermediate).
+- **Right Panel:** Real-time 32×32 local foveated view tracking the agent's coordinates. Upon triggering the terminal fixation action (`Action 16`), an adaptive ROI-guided morphological Chan-Vese pipeline segments the tumor in **~20.4 ms** (over **3.1× faster** than full-slice segmentation) while achieving superior boundary adherence (**Green:** Ground Truth, **Red:** Predicted Mask).
 
 ---
 
@@ -26,22 +34,22 @@ Unlike dense pixel-wise CNNs that process the entire high-resolution volume indi
 
 ```mermaid
 graph LR
-    subgraph Input["12-Channel Multi-Scale Observation (32×32)"]
-        A1["Local Patch (32×32)<br/>FLAIR, T1ce, T2 (3 ch)"]
-        A2["Intermediate Context (96×96 → 32×32)<br/>FLAIR, T1ce, T2 (3 ch)"]
-        A3["Global Context (240×240 → 32×32)<br/>FLAIR, T1ce, T2 (3 ch)"]
+    subgraph Input["12-Channel Multi-Scale Observation (32x32)"]
+        A1["Local Patch (32x32)<br/>FLAIR, T1ce, T2 (3 ch)"]
+        A2["Intermediate Context (96x96 -> 32x32)<br/>FLAIR, T1ce, T2 (3 ch)"]
+        A3["Global Context (240x240 -> 32x32)<br/>FLAIR, T1ce, T2 (3 ch)"]
         A4["Spatial & Memory Maps<br/>Visited Map (0.98 decay) + Normalized X, Y (3 ch)"]
     end
 
     subgraph Agent["Stage 1: Deep RL Localization (PPO)"]
         B1["Custom Gymnasium Env<br/>(BrainTumor_V18)"]
-        B2["17-Action Discrete Space<br/>• 8 Macro Steps (10 px)<br/>• 8 Micro Steps (2 px)<br/>• 1 Terminal Trigger"]
+        B2["17-Action Discrete Space<br/>- 8 Macro Steps (10 px)<br/>- 8 Micro Steps (2 px)<br/>- 1 Terminal Trigger"]
     end
 
     subgraph Seg["Stage 2: Adaptive ROI Segmentation"]
-        C1["Initial 64×64 ROI Crop<br/>around Fixation Point"]
+        C1["Initial 64x64 ROI Crop<br/>around Fixation Point"]
         C2{"Boundary Contact<br/>Detected?"}
-        C3["Expand to 96×96 ROI"]
+        C3["Expand to 96x96 ROI"]
         C4["Gaussian Smoothing + Flood Fill<br/>+ Morphological Chan-Vese"]
     end
 
@@ -65,7 +73,7 @@ graph LR
 ## 📊 Quantitative Benchmarks & Ablation Study
 
 ### 1. In-Distribution Evaluation: BraTS 2021 Internal Test Set ($N = 201$ Unseen Patients)
-* **Localization Success Rate:** **96.02%** (`193 / 201` patients localized within the strict threshold).
+- **Localization Success Rate:** **96.02%** (`193 / 201` patients localized within the strict threshold).
 
 | Segmentation Strategy | Mean Dice | Mean Latency (ms) | Median Latency (ms) | P95 Latency (ms) | Speedup vs. Full |
 | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -77,12 +85,12 @@ graph LR
 
 ### 2. Zero-Shot Out-of-Distribution Generalization: BraTS 2023 Meningioma ($N = 1,000$ Patients)
 Evaluated directly on 1,000 external Meningioma cases without fine-tuning to test robustness under severe domain shift:
-* **Zero-Shot Localization Success:** **70.60%** (`706 / 1,000` patients).
-* **Adaptive ROI (`64→96`) Mean Dice:** **0.6571** at **18.1 ms** (outperforming Full-Slice segmentation both in accuracy [`0.6419` Dice] and speed [`63.0 ms`]).
+- **Zero-Shot Localization Success:** **70.60%** (`706 / 1,000` patients).
+- **Adaptive ROI (`64→96`) Mean Dice:** **0.6571** at **18.1 ms** (outperforming Full-Slice segmentation both in accuracy [`0.6419` Dice] and speed [`63.0 ms`]).
 
 ---
 
 ## 🛠️ Tech Stack
-* **Core RL & Deep Learning:** `PyTorch`, `Stable-Baselines3 (PPO)`, `Gymnasium`
-* **Computer Vision & Medical Imaging:** `OpenCV`, `scikit-image (Morphological Chan-Vese)`, `NiBabel`, `SciPy`
-* **Parallelization:** `SubprocVecEnv` multiprocess sampling with single-threaded BLAS/OpenMP optimization
+- **Core RL & Deep Learning:** `PyTorch`, `Stable-Baselines3 (PPO)`, `Gymnasium`
+- **Computer Vision & Medical Imaging:** `OpenCV`, `scikit-image (Morphological Chan-Vese)`, `NiBabel`, `SciPy`
+- **Parallelization:** `SubprocVecEnv` multiprocess sampling with single-threaded BLAS/OpenMP optimization
