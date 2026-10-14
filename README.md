@@ -13,15 +13,15 @@
 
 ### Case 1 (`BraTS2021_00008`): Long-Range Cross-Hemisphere Search & Fixation
 *Starting far from the lesion in the opposite hemisphere, the agent leverages 10px macro-steps for rapid global traversal before executing terminal fixation inside the tumor core.*
-![Agent Localization and Segmentation Demo 1](./agent_demo_1.gif)
+![Agent Localization and Segmentation Demo 1](./assets/agent_demo_1.gif)
 
 ### Case 2 (`BraTS2021_00501`): Large-Volume Tumor & Dynamic ROI Expansion (`64×64 → 96×96`)
 *Demonstrates adaptive window scaling when encountering an extensive lesion where the initial 64×64 seed mask contacts the crop boundary.*
-![Agent Localization and Segmentation Demo 2](./agent_demo_2.gif)
+![Agent Localization and Segmentation Demo 2](./assets/agent_demo_2.gif)
 
 ### Case 3 (`BraTS2021_01394`): Heterogeneous Multi-Focal Lesion & Boundary Adherence
 *Illustrates robust localization and morphological contour evolution on a lower-contrast slice with complex, multi-core tumor morphology.*
-![Agent Localization and Segmentation Demo 3](./agent_demo_3.gif)
+![Agent Localization and Segmentation Demo 3](./assets/agent_demo_3.gif)
 
 - **Left Panel:** The PPO agent navigates the 240×240 multi-modal MRI slice using a multi-scale foveated observation window (yellow: 32×32 local high-acuity patch, orange: 96×96 intermediate context).
 - **Right Panel:** Real-time 32×32 local foveated view tracking the agent's coordinates. Upon triggering the terminal fixation action (`Action 16`), the Stage-2 adaptive ROI-guided morphological Chan-Vese pipeline segments the lesion (**Green:** Ground Truth, **Red:** Predicted Mask).
