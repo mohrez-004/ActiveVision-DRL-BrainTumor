@@ -4,7 +4,6 @@ Core Architecture & Inference Pipeline for Active-Vision Brain Tumor Localizatio
 This module provides the production-grade implementation of:
 1. The 12-Channel Multi-Scale Foveated Gymnasium Environment specification.
 2. The Stage-2 Adaptive ROI-Guided Morphological Chan-Vese Segmentation pipeline.
-
 Note: Full PPO training loops and proprietary reward-shaping coefficients are
 restricted pending peer-review publication.
 """
